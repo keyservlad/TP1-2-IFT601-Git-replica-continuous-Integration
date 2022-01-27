@@ -1,4 +1,6 @@
 add_library(git
+    init.h
+    init.cpp
     dummy.h 
     dummy.cpp)
 if (UNIX)

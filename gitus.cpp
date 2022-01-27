@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cerrno>
 
+#include <init.h>
 #include <dummy.h>
 
 int main()
