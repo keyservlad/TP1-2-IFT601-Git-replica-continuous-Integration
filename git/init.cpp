@@ -38,7 +38,7 @@ void Init() {
 
 	}
 	else
-		std::cout << "La répertoire .git/objects est déjà créée" << std::endl;
+		std::cout << "Le répertoire .git/objects est déjà créé" << std::endl;
 
 	if (!boost::filesystem::exists(gitFolder, code)) // ne lance pas d'exception .. c'est attrapé par le code
 	{

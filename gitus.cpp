@@ -3,7 +3,7 @@
 #include <cerrno>
 
 #include <init.h>
-#include <dummy.h>
+#include <add.h>
 
 
 void Help()
@@ -34,6 +34,15 @@ int main(int argc, char* argv[])
 			Init();
 		else
 			std::cout << "usage: gitus init" << std::endl;
+	}
+
+	// init
+	else if (argvString[1] == "add")
+	{
+		if (argc == 3)
+			Add(argvString[2]);
+		else
+			std::cout << "usage: gitus add <path>" << std::endl;
 	}
 
 	// Not a valid command
