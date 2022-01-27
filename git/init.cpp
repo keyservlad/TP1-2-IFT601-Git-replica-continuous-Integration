@@ -1,16 +1,6 @@
 #include "init.h"
-
-#include <fstream>
 #include <iostream>
-#include <sstream>
-#include <string>
-
 #include <boost/filesystem.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/uuid/detail/sha1.hpp>
 
 
 void Init() {
@@ -26,6 +16,8 @@ void Init() {
 		boost::filesystem::create_directory(gitFolder); // exception possible
 
 	}
+	else
+		std::cout << "La répertoire .git est déjà créée" << std::endl;
 
 	boost::system::error_code code;
 	if (!boost::filesystem::exists(gitFolder, code)) // ne lance pas d'exception .. c'est attrapé par le code
@@ -35,4 +27,65 @@ void Init() {
 			std::cout << "Something bad happened but we didn't throw anything...so thats good :)" << std::endl;
 		}
 	}
+
+	auto objFolder = gitFolder / "objects";
+
+	// création du dossier objets dans ./git 
+	if (!boost::filesystem::exists(objFolder))  // peut lancer une exception
+	{
+		// si le répertoire n'existe pas, on le crée
+		boost::filesystem::create_directory(objFolder); // exception possible
+
+	}
+	else
+		std::cout << "La répertoire .git/objects est déjà créée" << std::endl;
+
+	if (!boost::filesystem::exists(gitFolder, code)) // ne lance pas d'exception .. c'est attrapé par le code
+	{
+		if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
+		{
+			std::cout << "Something bad happened but we didn't throw anything...so thats good :)" << std::endl;
+		}
+	}
+
+	auto indFilePath = gitFolder / "index";
+
+	// Création du fichier index dans la répertoire ./git
+	if (!boost::filesystem::exists(indFilePath))
+	{
+		std::ofstream outputFile(indFilePath.c_str());
+		outputFile.close();
+	}
+	else
+		std::cout << "Le fichier index est déjà créé" << std::endl;
+
+	if (!boost::filesystem::exists(indFilePath, code)) // ne lance pas d'exception .. c'est attrapé par le code
+	{
+		if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
+		{
+			std::cout << "Something bad happened but we didn't throw anything...so thats good :)" << std::endl;
+		}
+	}
+
+	auto headFilePath = gitFolder / "HEAD";
+
+	// Create empty .git/HEAD file
+	if (!boost::filesystem::exists(headFilePath))
+	{
+		std::ofstream outputFile(headFilePath.c_str());
+		outputFile.close();
+	}
+	else
+		std::cout << "Le fichier HEAD est déjà créé" << std::endl;
+
+	if (!boost::filesystem::exists(headFilePath, code)) // ne lance pas d'exception .. c'est attrapé par le code
+	{
+		if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
+		{
+			std::cout << "Something bad happened but we didn't throw anything...so thats good :)" << std::endl;
+		}
+	}
+
+	std::cout << "L'initialisation du répertoire GIT est terminé avec succès ! :)" << gitFolder << std::endl;
 }
+
