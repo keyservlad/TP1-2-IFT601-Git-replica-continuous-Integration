@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 		if (argc == 3)
 			Add(argvString[2]);
 		else
-			std::cout << "usage: gitus add <path>" << std::endl;
+			std::cout << "usage: gitus add <pathspec>" << std::endl;
 	}
 
 	// Not a valid command
