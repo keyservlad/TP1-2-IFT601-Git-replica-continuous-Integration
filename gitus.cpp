@@ -1,10 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <cerrno>
+#include <boost/filesystem.hpp>
+#include <ctime>
 
 #include <init.h>
 #include <add.h>
-
+#include <commit.h>
 
 void Help()
 {
@@ -49,6 +51,9 @@ int main(int argc, char* argv[])
 	else
 		Help();
 
+	std::string parent;
+	std::string tree;
+	Commit(parent, tree);
     return 42;
 }
 
