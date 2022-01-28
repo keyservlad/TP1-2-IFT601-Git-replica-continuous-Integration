@@ -3,6 +3,8 @@ add_library(git
 	sha1.cpp
 	add.h
 	add.cpp
+    commit.h
+    commit.cpp
     init.h
     init.cpp
     dummy.h 

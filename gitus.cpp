@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 			std::cout << "usage: gitus init" << std::endl;
 	}
 
-	// init
+	// add
 	else if (argvString[1] == "add")
 	{
 		if (argc == 3)
@@ -51,9 +51,6 @@ int main(int argc, char* argv[])
 	else
 		Help();
 
-	std::string parent;
-	std::string tree;
-	Commit(parent, tree);
     return 42;
 }
 

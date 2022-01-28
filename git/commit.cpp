@@ -34,7 +34,7 @@ bool Verif_File(std::string path, std::string txt)
 */
 std::string Creat_Tree(std::string chemain, std::string txt)
 {
-    
+    return("xxx");
 }
 
 void Add_Parent_File(std::string parent, std::string tree)
@@ -42,7 +42,7 @@ void Add_Parent_File(std::string parent, std::string tree)
 
 }
 
-void Commiter(std::string msg, std::string author)
+void Commit(std::string msg, std::string author)
 {
 
 }
