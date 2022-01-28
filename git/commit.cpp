@@ -3,7 +3,6 @@
 #include <boost/filesystem.hpp>
 #include <ctime>
 
-
 namespace fs = boost::filesystem;
 
 /*
@@ -43,7 +42,7 @@ void Add_Parent_File(std::string parent, std::string tree)
 
 }
 
-void Commit(std::string msg, std::string author)
+void Commiter(std::string msg, std::string author)
 {
 
 }
