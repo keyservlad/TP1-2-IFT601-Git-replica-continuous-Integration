@@ -36,4 +36,5 @@ string Sha1Generator(string path)
 		stream << std::hex << hash[i];
 	}
 	result += stream.str();
+	return result;
 }
