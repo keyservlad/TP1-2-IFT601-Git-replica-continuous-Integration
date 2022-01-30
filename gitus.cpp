@@ -46,6 +46,13 @@ int main(int argc, char* argv[])
 		else
 			std::cout << "usage: gitus add <pathspec>" << std::endl;
 	}
+	else if (argvString[1] == "commit")
+	{
+		if (argc == 4)
+			Commit(argvString[2], argvString[3]);
+		else
+			std::cout << "usage: gitus commit <msg> <author>" << std::endl;
+	}
 
 	// Not a valid command
 	else
