@@ -124,7 +124,7 @@ TEST_CASE("add")
 	indexInputFile.close();
 
 	const string indexContent = indexContentStream.str();
-	const string indexContentInputed = "test.txt " + sha1 + "\n";
+	const string indexContentInputed = sha1 + " test.txt" + "\n";
 
 	REQUIRE(indexContent == indexContentInputed);
 
@@ -179,4 +179,64 @@ TEST_CASE("add-without-init")
 
 TEST_CASE("commit")
 {
+	boost::system::error_code code;
+
+	// on créé les variables des chemins des fichiers et dossiers créés par init
+	const auto gitFolder = fs::current_path() / ".git";
+	const auto objectsFolder = fs::current_path() / ".git" / "objects";
+	const auto indexPath = fs::current_path() / ".git" / "index";
+	const auto headPath = fs::current_path() / ".git" / "HEAD";
+
+	const string message = "message";
+	const string author = "alice";
+
+	Init();
+
+	// On créé le fichier de test puis on fait le add
+	createTestFile(code);
+	Add("test.txt");
+
+	// On fait le commit et vérifie que ca se passe bien
+	REQUIRE(Commit(message, author));
+
+	// On vérifie que index existe toujours et qu'il est vide
+	REQUIRE(fs::exists(indexPath, code));
+	REQUIRE(fs::is_empty(indexPath, code));
+
+	//on génère le sha1 et on le stocke dans une constante
+	const string sha1 = Sha1Generator("commit" + message + author);
+	
+	/*const string dir_name = sha1.substr(0, 2);
+	const auto myPath = fs::current_path() / ".git" / "objects" / dir_name;
+	
+	const string file = myPath.string();*/
+
+
+	const string tree = Creat_Tree(indexPath.string(), "tree" + message + author);
+
+	// on vérifie que head existe et qu'il n'est pas vide
+	REQUIRE(fs::exists(indexPath, code));
+	REQUIRE(!fs::is_empty(headPath, code));
+
+	// On récupère le contenu du HEAD
+	fs::ifstream HeadInputFile(headPath.c_str());
+	stringstream HeadContentStream;
+	HeadContentStream << HeadInputFile.rdbuf();
+	HeadInputFile.close();
+
+	const string HeadFileContent = HeadContentStream.str();
+
+	// TODO il faut test le contenu du head, et du tree
+
+	// Get what will be the generated sha1 and its path
+	const string sha1DirectoryName = sha1.substr(0, 2);
+	const string sha1FileName = sha1.substr(2);
+	auto const sha1Path = fs::current_path().append(".git").append("objects").append(sha1DirectoryName).append(sha1FileName);
+
+	fs::ifstream sha1InputFile(sha1Path.c_str());
+	stringstream sha1ContentStream;
+	sha1ContentStream << sha1InputFile.rdbuf();
+	sha1InputFile.close();
+
+	const string sha1FileContent = sha1ContentStream.str();
 }

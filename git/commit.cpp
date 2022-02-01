@@ -6,7 +6,7 @@
 namespace fs = boost::filesystem;
 
 
-void Commit(string message, string author)
+bool Commit(string message, string author)
 {
     string parent = "\0";
     const string sha1 = Sha1Generator("commit" + message + author);
@@ -22,10 +22,11 @@ void Commit(string message, string author)
         if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
         {
             cout << "Something bad happened but we didn't throw anything...so thats good :)" << endl;
+            return false;
         }
     }
     boost::filesystem::ofstream(currentPath / file_name);
-    const string file = currentPath.string();
+    const string file = myPath.string();
 
     const time_t myTime = time(0);
     const char* d_time = ctime(&myTime);
@@ -95,6 +96,7 @@ void Commit(string message, string author)
     ofs_obj.close();
 
     cout << "Commit has been successfully established !! :)" << endl;
+    return true;
 }
 
 
