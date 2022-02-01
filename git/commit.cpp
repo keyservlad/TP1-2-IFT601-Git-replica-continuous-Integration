@@ -14,7 +14,7 @@ void Commit(string message, string author)
     const string dir_name = sha1.substr(0, 2);
     const string file_name = sha1.substr(2);
     const auto currentPath = boost::filesystem::current_path();
-    const auto const myPath = currentPath / ".git" / "objects" / dir_name;
+    const auto myPath = currentPath / ".git" / "objects" / dir_name;
 
     boost::filesystem::create_directory(myPath, code);
     if (!boost::filesystem::exists(myPath, code)) // ne lance pas d'exception .. c'est attrapé par le code
