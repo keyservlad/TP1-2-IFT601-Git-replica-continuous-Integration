@@ -138,7 +138,7 @@ TEST_CASE("add")
 	sha1InputFile.close();
 
 	const string sha1Content = sha1ContentStream.str();
-	const string sha1ContentInputed = "test.txt " + std::to_string(7) + " fichier test\n\n";
+	const string sha1ContentInputed = "test.txt " + std::to_string(13) + " fichier test\n\n";
 
 	REQUIRE(sha1Content == sha1ContentInputed);
 }
