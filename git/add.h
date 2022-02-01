@@ -1,3 +1,4 @@
 #include <iostream>
 
-void Add(std::string);
+// utilisation d'un bool pour les tests
+bool Add(std::string);

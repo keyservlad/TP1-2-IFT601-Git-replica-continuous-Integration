@@ -13,8 +13,8 @@
 
 namespace fs = boost::filesystem;
 
-
-void Add(string pathOfAddedFile)
+// boolean et return sont utiles pour les tests
+bool Add(string pathOfAddedFile)
 {
 	const auto index_path = boost::filesystem::current_path() / ".git" / "index";	// path of index
 	const auto objects_path = boost::filesystem::current_path() / ".git" / "objects"; // path of the directory objects
@@ -25,13 +25,13 @@ void Add(string pathOfAddedFile)
 	if (!boost::filesystem::exists(index_path, code))
 	{
 		cout << "File index is missing, make sure you run the init command" << endl;
-		return;
+		return false;
 	}
 
 	if (!boost::filesystem::exists(objects_path))  // peut lancer une exception
 	{
 		cout << "The objects directory is missing, make sure you run the init command" << endl;
-		return;
+		return false;
 	}
 
 	// Chemin du fichier à ajouter
@@ -41,7 +41,7 @@ void Add(string pathOfAddedFile)
 	if (!boost::filesystem::exists(pathAddedFile, code))
 	{
 		cout << "The file you are trying to add doesn't exist" << endl;
-		return;
+		return false;
 	}
 
 	// Nous générons le sha1 du fichier à ajouter
@@ -102,5 +102,5 @@ void Add(string pathOfAddedFile)
 	index_Output.close();
 
 	cout << "The file <" <<  fs::path(pathOfAddedFile).filename().string() << "> has been added successfully ! :) " << endl;
-	return;
+	return true;
 }
