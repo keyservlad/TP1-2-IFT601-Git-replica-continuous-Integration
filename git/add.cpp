@@ -49,8 +49,6 @@ void Add(string pathOfAddedFile)
 
 	string index;
 	const string index_Content = sha1 + " " + pathOfAddedFile;
-
-	boost::system::error_code code;
 	const string directory = sha1.substr(0, 2);
 	const string file = sha1.substr(2);
 	const string added_File = fs::path(pathOfAddedFile).filename().string();
