@@ -4,7 +4,7 @@
 
 
 void Init() {
-	auto current_path = boost::filesystem::current_path();	// ou sommes nous?
+	const auto current_path = boost::filesystem::current_path();	// ou sommes nous?
 
 	// l'opéreteur "/" sert à concaténer un chemin (path -- style boost) avec un chemin ou bien une chaine de caractères
 	const auto gitFolder = current_path / ".git";	// ajouter un fichier de la manière décidée par la plateforme
@@ -17,7 +17,7 @@ void Init() {
 
 	}
 	else
-		std::cout << "La répertoire .git est déjà créée" << std::endl;
+		std::cout << "<.git> is already created !" << std::endl;
 
 	boost::system::error_code code;
 	if (!boost::filesystem::exists(gitFolder, code)) // ne lance pas d'exception .. c'est attrapé par le code
@@ -28,7 +28,7 @@ void Init() {
 		}
 	}
 
-	auto objFolder = gitFolder / "objects";
+	const auto objFolder = gitFolder / "objects";
 
 	// création du dossier objets dans ./git 
 	if (!boost::filesystem::exists(objFolder))  // peut lancer une exception
@@ -38,7 +38,7 @@ void Init() {
 
 	}
 	else
-		std::cout << "Le répertoire .git/objects est déjà créé" << std::endl;
+		std::cout << "<.git/objects> is already created !" << std::endl;
 
 	if (!boost::filesystem::exists(gitFolder, code)) // ne lance pas d'exception .. c'est attrapé par le code
 	{
@@ -48,7 +48,7 @@ void Init() {
 		}
 	}
 
-	auto indFilePath = gitFolder / "index";
+	const auto indFilePath = gitFolder / "index";
 
 	// Création du fichier index dans la répertoire ./git
 	if (!boost::filesystem::exists(indFilePath))
@@ -57,7 +57,7 @@ void Init() {
 		outputFile.close();
 	}
 	else
-		std::cout << "Le fichier index est déjà créé" << std::endl;
+		std::cout << "The index file is already created !" << std::endl;
 
 	if (!boost::filesystem::exists(indFilePath, code)) // ne lance pas d'exception .. c'est attrapé par le code
 	{
@@ -67,7 +67,7 @@ void Init() {
 		}
 	}
 
-	auto headFilePath = gitFolder / "HEAD";
+	const auto headFilePath = gitFolder / "HEAD";
 
 	// Create empty .git/HEAD file
 	if (!boost::filesystem::exists(headFilePath))
@@ -76,7 +76,7 @@ void Init() {
 		outputFile.close();
 	}
 	else
-		std::cout << "Le fichier HEAD est déjà créé" << std::endl;
+		std::cout << "The HEAD file is already created !" << std::endl;
 
 	if (!boost::filesystem::exists(headFilePath, code)) // ne lance pas d'exception .. c'est attrapé par le code
 	{
@@ -86,6 +86,6 @@ void Init() {
 		}
 	}
 
-	std::cout << "L'initialisation du répertoire GIT est terminé avec succès ! :)" << gitFolder << std::endl;
+	std::cout << "The initialisation of the repository has been successfully established ! :)" << gitFolder << std::endl;
 }
 

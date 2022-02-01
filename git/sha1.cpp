@@ -9,14 +9,14 @@ using namespace boost::uuids::detail;
 
 
 
-std::string Sha1Generator(std::string path)
+string Sha1Generator(string path)
 {
-	std::ifstream file(path);	// pas besoin de gerer l'acces
+	ifstream file(path);	// pas besoin de gerer l'acces
 								// mais il faut s'assurer que le fichier existe
 
 	// lecture automatique du contenu et insertion dans une string
-	std::string content{ std::istreambuf_iterator<char>(file),
-					std::istreambuf_iterator<char>() };
+	string content{ istreambuf_iterator<char>(file),
+					istreambuf_iterator<char>() };
 
 
 	sha1 sha;
@@ -27,13 +27,13 @@ std::string Sha1Generator(std::string path)
 	sha.get_digest(hash); // get 5 uint (32 bits -- that can be converted into 8 hex characters) that, combined, maked for the 40 characters
 	// This is done by just transforming the uints into hexadecimal values // 
 
-	std::stringstream stream;
+	stringstream stream;
 
-	std::string result;
+	string result;
 	// there is something missing here...but what?
 	for (int i = 0; i < 5; ++i)
 	{
-		stream << std::hex << hash[i] << std::setfill('0') << std::setw(8);
+		stream << hex << hash[i] << setfill('0') << setw(8);
 	}
 	result += stream.str();
 	return result;
