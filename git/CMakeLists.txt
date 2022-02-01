@@ -6,9 +6,7 @@ add_library(git
     commit.h
     commit.cpp
     init.h
-    init.cpp
-    dummy.h 
-    dummy.cpp)
+    init.cpp)
 if (UNIX)
 target_link_libraries(git 
     PUBLIC 

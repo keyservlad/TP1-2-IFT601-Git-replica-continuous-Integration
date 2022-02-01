@@ -4,7 +4,6 @@
 // https://github.com/catchorg/Catch2/blob/master/docs/tutorial.md#top
 
 #include "catch.hpp"
-#include <dummy.h>
 
 TEST_CASE("is the world ok") 
 {
