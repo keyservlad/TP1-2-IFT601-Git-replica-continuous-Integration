@@ -26,7 +26,7 @@ bool Commit(string message, string author)
     fs::ofstream o_head(myHead);
     fs::ofstream ofs_obj(myObjects);
 
-    string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
+    //string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
 
     // Ajouter les fichiers parents déjà présents
     if (parent != "\0")
@@ -80,7 +80,7 @@ bool Commit(string message, string author)
     ofs_obj.close();
 
     cout << "Commit has been successfully established !! :)" << endl;
-    string the_tree = Creat_Tree(".git/index", "This is my tree" + message + author); // Create tree
+    string the_tree = Creat_Tree(".git/index", message + author); // Create tree
     return true;
 }
 
