@@ -117,17 +117,17 @@ string Creat_Tree(string chemain, string txt)
     const string myTxt = "tree" + txt;
     const string sha1 = Sha1Generator(myTxt);
     string myData;
-    string myFile = "";
+    string myFile = Dir_creation(sha1);
     boost::system::error_code code;
 
-    try
-    {
-        myFile = Dir_creation(sha1);
-    }
-    catch (exception& e)
-    {
-        cout << e.what() << endl;
-    }
+    //try
+    //{
+    //   myFile = Dir_creation(sha1);
+    //}
+    //catch (exception& e)
+    //{
+    //    cout << e.what() << endl;
+    //}
 
     // Si le chemin se trouve dans un autre sous-dossier
     if (chemain != ".git/index")
