@@ -10,24 +10,7 @@ bool Commit(string message, string author)
 {
     string parent = "\0";
     const string sha1 = Sha1Generator("commit" + message + author);
-    boost::system::error_code code;
-    const string dir_name = sha1.substr(0, 2);
-    const string file_name = sha1.substr(2);
-    const auto currentPath = boost::filesystem::current_path();
-    auto myPath = currentPath / ".git" / "objects" / dir_name;
-
-    boost::filesystem::create_directory(myPath, code);
-    if (!boost::filesystem::exists(myPath, code)) // ne lance pas d'exception .. c'est attrapé par le code
-    {
-        if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
-        {
-            cout << "Something bad happened but we didn't throw anything...so thats good :)" << endl;
-            return false;
-        }
-    }
-    
-    boost::filesystem::ofstream(myPath.append(file_name));
-    const string file = myPath.string();
+    const string file = Dir_creation(sha1);
 
     const time_t myTime = time(0);
     const char* d_time = ctime(&myTime);
@@ -139,7 +122,7 @@ string Creat_Tree(string chemain, string txt)
 
     try
     {
-        myFile = Sha1Generator(sha1);
+        myFile = Dir_creation(sha1);
     }
     catch (exception& e)
     {
@@ -206,4 +189,24 @@ string Creat_Tree(string chemain, string txt)
 
     return sha1;
 }
+string Dir_creation(string sha1)
+{
+    boost::system::error_code code;
+    const string dir_name = sha1.substr(0, 2);
+    const string file_name = sha1.substr(2);
+    const auto currentPath = boost::filesystem::current_path();
+    auto myPath = currentPath / ".git" / "objects" / dir_name;
 
+    boost::filesystem::create_directory(myPath, code);
+    if (!boost::filesystem::exists(myPath, code)) // ne lance pas d'exception .. c'est attrapé par le code
+    {
+        if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
+        {
+            cout << "Something bad happened but we didn't throw anything...so thats good :)" << endl;
+            return false;
+        }
+    }
+
+    boost::filesystem::ofstream(myPath.append(file_name));
+    return(myPath.string());
+}
