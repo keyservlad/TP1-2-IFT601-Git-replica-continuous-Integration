@@ -14,7 +14,7 @@ bool Commit(string message, string author)
     const string dir_name = sha1.substr(0, 2);
     const string file_name = sha1.substr(2);
     const auto currentPath = boost::filesystem::current_path();
-    const auto myPath = currentPath / ".git" / "objects" / dir_name;
+    auto myPath = currentPath / ".git" / "objects" / dir_name;
 
     boost::filesystem::create_directory(myPath, code);
     if (!boost::filesystem::exists(myPath, code)) // ne lance pas d'exception .. c'est attrapé par le code
@@ -25,9 +25,9 @@ bool Commit(string message, string author)
             return false;
         }
     }
-    const auto the_Path = myPath / file_name;
-    boost::filesystem::ofstream(the_Path);
-    const string file = the_Path.string();
+    
+    boost::filesystem::ofstream(myPath.append(file_name));
+    const string file = myPath.string();
 
     const time_t myTime = time(0);
     const char* d_time = ctime(&myTime);
