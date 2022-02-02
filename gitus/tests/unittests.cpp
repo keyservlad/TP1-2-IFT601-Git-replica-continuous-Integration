@@ -109,19 +109,19 @@ TEST_CASE("add")
 
 	// on créé le sha1 du fichier et on vérifie son path
 	const string sha1 = Sha1Generator("test.txt");
-	const string sha1DirectoryName = sha1.substr(0, 2);
-	const string sha1FileName = sha1.substr(2);
-	auto const sha1Path = fs::current_path() / ".git" / "objects" / sha1DirectoryName / sha1FileName;
-	REQUIRE(!fs::exists(sha1Path, code));
+	const string sha1_Directory = sha1.substr(0, 2);
+	const string sha1_File = sha1.substr(2);
+	auto const sha1_Path = fs::current_path() / ".git" / "objects" / sha1_Directory / sha1_File;
+	REQUIRE(!fs::exists(sha1_Path, code));
 
 	// Ensuite on teste le add
 	REQUIRE(Add("test.txt"));
 
 	// On récupère le contenu de l'index et on le vérifie avec ce que ca devrait être
-	fs::ifstream indexInputFile(indexPath.c_str());
+	fs::ifstream index_Input(indexPath.c_str());
 	stringstream indexContentStream;
-	indexContentStream << indexInputFile.rdbuf();
-	indexInputFile.close();
+	indexContentStream << index_Input.rdbuf();
+	index_Input.close();
 
 	const string indexContent = indexContentStream.str();
 	const string indexContentInputed = sha1 + " test.txt" + "\n";
@@ -129,10 +129,10 @@ TEST_CASE("add")
 	REQUIRE(indexContent == indexContentInputed);
 
 	// on vérifie que le sha1 existe dans objects
-	REQUIRE(fs::exists(sha1Path, code));
+	REQUIRE(fs::exists(sha1_Path, code));
 
 	// on verifie son contenu de la même maniere que dans l'index
-	fs::ifstream sha1InputFile(sha1Path.c_str());
+	fs::ifstream sha1InputFile(sha1_Path.c_str());
 	stringstream sha1ContentStream;
 	sha1ContentStream << sha1InputFile.rdbuf();
 	sha1InputFile.close();
@@ -183,11 +183,11 @@ TEST_CASE("commit")
 
 	// on créé les variables des chemins des fichiers et dossiers créés par init
 	const auto gitFolder = fs::current_path() / ".git";
-	const auto objectsFolder = fs::current_path() / ".git" / "objects";
-	const auto indexPath = fs::current_path() / ".git" / "index";
-	const auto headPath = fs::current_path() / ".git" / "HEAD";
+	const auto objects_Folder = fs::current_path() / ".git" / "objects";
+	const auto index_Path = fs::current_path() / ".git" / "index";
+	const auto head_Path = fs::current_path() / ".git" / "HEAD";
 
-	const string message = "message";
+	const string msg = "message";
 	const string author = "alice";
 
 	Init();
@@ -197,46 +197,38 @@ TEST_CASE("commit")
 	Add("test.txt");
 
 	// On fait le commit et vérifie que ca se passe bien
-	REQUIRE(Commit(message, author));
+	REQUIRE(Commit(msg, author));
 
 	// On vérifie que index existe toujours et qu'il est vide
-	REQUIRE(fs::exists(indexPath, code));
-	REQUIRE(fs::is_empty(indexPath, code));
+	REQUIRE(fs::exists(index_Path, code));
+	REQUIRE(fs::is_empty(index_Path, code));
 
 	//on génère le sha1 et on le stocke dans une constante
-	const string sha1 = Sha1Generator("commit" + message + author);
-	
-	/*const string dir_name = sha1.substr(0, 2);
-	const auto myPath = fs::current_path() / ".git" / "objects" / dir_name;
-	
-	const string file = myPath.string();*/
+	const string sha1 = Sha1Generator("commit" + msg + author);
 
-
-	const string tree = Creat_Tree(indexPath.string(), "tree" + message + author);
+	const string tree = Creat_Tree(index_Path.string(), "tree" + msg + author);
 
 	// on vérifie que head existe et qu'il n'est pas vide
-	REQUIRE(fs::exists(indexPath, code));
-	REQUIRE(!fs::is_empty(headPath, code));
+	REQUIRE(fs::exists(index_Path, code));
+	REQUIRE(!fs::is_empty(head_Path, code));
 
 	// On récupère le contenu du HEAD
-	fs::ifstream HeadInputFile(headPath.c_str());
-	stringstream HeadContentStream;
-	HeadContentStream << HeadInputFile.rdbuf();
-	HeadInputFile.close();
+	fs::ifstream Head_Input(head_Path.c_str());
+	stringstream Head_Content;
+	Head_Content << Head_Input.rdbuf();
+	Head_Input.close();
 
-	const string HeadFileContent = HeadContentStream.str();
+	const string Head_Content_File = Head_Content.str();
 
-	// TODO il faut test le contenu du head, et du tree
+	// Obtenir le sha1 généré et son chemain
+	const string sha1_Directory = sha1.substr(0, 2);
+	const string sha1_File = sha1.substr(2);
+	auto const sha1_Path = fs::current_path().append(".git").append("objects").append(sha1_Directory).append(sha1_File);
 
-	// Get what will be the generated sha1 and its path
-	const string sha1DirectoryName = sha1.substr(0, 2);
-	const string sha1FileName = sha1.substr(2);
-	auto const sha1Path = fs::current_path().append(".git").append("objects").append(sha1DirectoryName).append(sha1FileName);
+	fs::ifstream sha1_Input(sha1_Path.c_str());
+	stringstream sha1_Content;
+	sha1_Content << sha1_Input.rdbuf();
+	sha1_Input.close();
 
-	fs::ifstream sha1InputFile(sha1Path.c_str());
-	stringstream sha1ContentStream;
-	sha1ContentStream << sha1InputFile.rdbuf();
-	sha1InputFile.close();
-
-	const string sha1FileContent = sha1ContentStream.str();
+	const string sha1FileContent = sha1_Content.str();
 }
