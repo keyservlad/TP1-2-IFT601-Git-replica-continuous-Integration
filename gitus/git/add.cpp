@@ -45,7 +45,7 @@ bool Add(string pathOfAddedFile)
 	}
 
 	// Nous générons le sha1 du fichier à ajouter
-	const string sha1 = Sha1Generator(pathOfAddedFile);
+	const string sha1 = Sha1_Add_Generator(pathOfAddedFile);
 
 	string index;
 	const string index_Content = sha1 + " " + pathOfAddedFile;
