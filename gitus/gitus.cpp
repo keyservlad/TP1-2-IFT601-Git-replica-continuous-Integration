@@ -10,11 +10,11 @@
 
 void Help()
 {
-	std::cout << "Guide d'utilisation: gitus <commande> [<arguments>]" << std::endl
-		<< "Voici les différentes commande gitus utilisées dans ce projet :" << std::endl
-		<< "init: Création d'une répertoire Git vide " << std::endl
-		<< "add: Ajout du contenu d'un fichier dans <index>" << std::endl
-		<< "commit:	Enregistre les modifications dans la répertoire" << std::endl;
+	std::cout << "User manual: gitus <commande> [<arguments>]" << std::endl
+		<< "Here are the different gitus commands used in this project:" << std::endl
+		<< "init: Creating an empty Git directory " << std::endl
+		<< "add: Adding the contents of a file to the staging area" << std::endl
+		<< "commit:	Save changes to directory" << std::endl;
 }
 
 
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 		if (argc == 2)
 			Init();
 		else
-			std::cout << "usage: gitus init" << std::endl;
+			std::cout << "How to use: gitus init" << std::endl;
 	}
 
 	// add
@@ -44,14 +44,14 @@ int main(int argc, char* argv[])
 		if (argc == 3)
 			Add(argvString[2]);
 		else
-			std::cout << "usage: gitus add <pathspec>" << std::endl;
+			std::cout << "How to use: gitus add <pathspec>" << std::endl;
 	}
 	else if (argvString[1] == "commit")
 	{
 		if (argc == 4)
 			Commit(argvString[2], argvString[3]);
 		else
-			std::cout << "usage: gitus commit <msg> <author>" << std::endl;
+			std::cout << "How to use: gitus commit <msg> <author>" << std::endl;
 	}
 
 	// Not a valid command

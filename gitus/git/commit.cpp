@@ -203,7 +203,7 @@ string Dir_creation(string sha1)
         if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
         {
             cout << "Something bad happened but we didn't throw anything...so thats good :)" << endl;
-            return false;
+            return("");
         }
     }
 
