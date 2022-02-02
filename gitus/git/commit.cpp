@@ -1,216 +1,212 @@
 #include "commit.h"
 #include "sha1.h"
-#include <boost/filesystem.hpp>
 #include <ctime>
+#include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
 
-
-bool Commit(string message, string author)
-{
-    string parent = "\0";
-    const string sha1 = Sha1Generator("commit" + message + author);
-    const string file = Dir_creation(sha1);
-
-    const time_t myTime = time(0);
-    const char* d_time = ctime(&myTime);
-
-    const fs::path myHead{ ".git/HEAD" };
-    const fs::path myObjects{ file };
-
-    fs::ifstream i_head{ myHead };
-
-    if (!fs::is_empty(myHead))
-        i_head >> parent;
-
-    fs::ofstream o_head(myHead);
-    fs::ofstream ofs_obj(myObjects);
-
-    const string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
-
-    // Ajouter les fichiers parents déjà présents
-    if (parent != "\0")
-    {
-        string myLine;
-        string Tree_parent;
-       
-        const string Path_parent = parent.substr(0, 2) + "/" + parent.substr(2);
-        const string Path_tree = tree.substr(0, 2) + "/" + tree.substr(2);
-
-        const auto thisPath = fs::current_path() / ".git/objects/" / Path_parent;
-
-        // Lire parent pour obtenir son arbre
-        const fs::path p_Parent{ thisPath };
-        fs::ifstream ifs{ p_Parent };
-
-        while (getline(ifs, myLine))
-            if (myLine.substr(0, 4).find("tree") != string::npos)
-                Tree_parent = myLine.substr(5, 2) + "/" + myLine.substr(7);
-
-        string parent_Line;
-        string child_Line;
-
-        auto obj_Path = fs::current_path() / ".git/objects/";
-
-        const fs::path t_Parent{ obj_Path / Tree_parent };
-        const fs::path t_Child{ obj_Path / Path_tree };
-
-        fs::ifstream ifs_2{ t_Parent };
-        fs::ifstream ifs_3{ t_Child };
-
-        fs::ofstream ofs{ t_Child, ios::app };
-
-        // On boucle alors que le fichier parent a encore une ligne
-        while (getline(ifs_2, parent_Line))
-        {
-            while (getline(ifs_3, child_Line))
-            {
-                if (child_Line.find(parent_Line) == string::npos)
-                    ofs << parent_Line << endl;
-            }
-        }
-    }
-         
-
-    // Faire le commit
-    ofs_obj << "Parent: " << parent << endl << "Tree: " << tree << endl << "Date: " << d_time << endl << "Author: " << author << endl << "Message: " << message << endl;
-    o_head << sha1 << endl; // mettre à jour le HEAD
-
-    o_head.close();
-    ofs_obj.close();
-
-    cout << "Commit has been successfully established !! :)" << endl;
-    return true;
-}
-
-
 /*
-* Cette fonction est utilisée pour vérifier si une ligne est déjà écrite ou pas
-* Elle prend comme parametres: le chemain et le text à vérifier
-* Elle retourne 1 si le text est présent, 0 sinon
+* Verify that a line is not already written in a file
+*   Parameters: (p) File path
+*               (l) Text to verify
+*   Return:      0 if the line is not present
+*                1 if the line is present
 */
-
-bool Verif_File(string path, string txt)
+bool VerifyFile(std::string pathStr, std::string text)
 {
-    fs::path chemain{ path };
-    fs::ifstream ifs{ chemain };
-    // Si le chemain est vide ne rien faire 
-    if (fs::is_empty(chemain))
+    fs::path path{ pathStr };
+    fs::ifstream ifs{ path };
+
+    if (fs::is_empty(path))
         return 0;
     else
     {
-        string line;
-        while (getline(ifs, line))
-            if (line.find(txt) != string::npos)
+        std::string line;
+        while (std::getline(ifs, line))
+            if (line.find(text) != std::string::npos)
                 return 1;
     }
+
     return 0;
 }
 
 /*
-* Cette fonction assure la création de l'arbre
-* Elle prend comme parameres: le chemain et la chaine de caractères
-* Elle génère finalement l'arbre sha1
+* Used to create a tree
+*   Parameters: (path) Index path
+*               (str) Any std::string
+*   Return:     Tree's sha1
 */
-string Creat_Tree(string chemain, string txt)
+std::string CreateTree(std::string path, std::string str)
 {
-    const string myTxt = "tree" + txt;
-    const string sha1 = Sha1Generator(myTxt);
-    string myData;
-    string myFile = "";
     boost::system::error_code code;
+    std::string data;
+    std::string sha1 = Sha1Generator("tree" + str);
+    std::string file = "";
 
-    try
+
+
+    const string NAME_DIR = sha1.substr(0, 2);
+    const string NAME_FILE = sha1.substr(2);
+
+    auto currentPath = boost::filesystem::current_path();
+    boost::filesystem::create_directory(currentPath.append(".git").append("objects").append(NAME_DIR), code);
+
+    boost::filesystem::ofstream(currentPath.append(NAME_FILE));
+
+    file = currentPath.string();
+
+
+    // If the path is inside another subfolder
+    if (path != ".git/index")
     {
-        myFile = Dir_creation(sha1);
-    }
-    catch (exception& e)
-    {
-        cout << e.what() << endl;
-    }
+        fs::path index{ ".git/index" };
+        fs::ifstream ifs{ index };
 
-    // Si le chemin se trouve dans un autre sous-dossier
-    if (chemain != ".git/index")
-    {
-        const fs::path index_path{ ".git/index" };
-        fs::ifstream ifs_index{ index_path };
+        fs::path objects{ file };
+        fs::ofstream tree(objects, ios::app);
 
-        fs::path myObjects{ myFile };
-        fs::ofstream myTree(myObjects, ios::app);
-
-        // Lire les lignes de l'index
-        while (getline(ifs_index, myData))
+        // Read lines of the index
+        while (std::getline(ifs, data))
         {
-            string myDir = myData.substr(chemain.length(), myData.find("/") - 2);
+            std::string dir = data.substr(path.length(), data.find("/") - 2);
 
-            if (myData.substr(0, chemain.length()) == chemain) // Vérifier le chemin du sous-dossier
+            if (data.substr(0, path.length()) == path) // Verify the subfolder path
             {
-                if (Verif_File(myFile, myData) == false) // Vérifiez que la ligne n'est pas déjà écrite
+                if (VerifyFile(file, data) == false) // Verify that the line is not already written
                 {
-                    if (fs::is_directory((chemain + myDir), code)) // Vérifiez si la ligne contient un dossier
+                    if (fs::is_directory((path + dir), code)) // Verify if the line contains a folder
                     {
-                        string subtree = Creat_Tree(chemain + myDir, "subtree" + myDir);  // Créer une arborescence pour le dossier
-                        myTree << "tree " << myDir.substr(1) << " " << subtree << endl;
+                        std::string subtree = CreateTree(path + dir, "subtree" + dir);  // Create a tree for the folder
+                        tree << "tree " << dir.substr(1) << " " << subtree << endl;
                     }
                     else
-                        myTree << "blob " << myData.substr(chemain.length() + 1) << endl;
+                        tree << "blob " << data.substr(path.length() + 1) << endl;
                 }
             }
         }
-        myTree.close();
+        tree.close();
     }
     else
     {
-        const fs::path index_path{ chemain };
-        fs::ifstream ifs_index{ index_path };
+        fs::path index{ path };
+        fs::ifstream ifs{ index };
 
-        const fs::path myObjects{ myFile };
-        fs::ofstream myTree(myObjects, ios::app);
+        fs::path objects{ file };
+        fs::ofstream tree(objects, ios::app);
 
-        while (getline(ifs_index, myData))
+        while (std::getline(ifs, data))
         {
-            string myDir = myData.substr(0, myData.find("/"));
-            if (Verif_File(myFile, myDir) == 0)
+            std::string dir = data.substr(0, data.find("/"));
+            if (VerifyFile(file, dir) == 0)
             {
-                if (fs::is_directory(myDir))
+                if (fs::is_directory(dir))
                 {
-                    string subtree = Creat_Tree(myDir, "subtree" + myDir);
-                    myTree << "tree " << myDir << " " << subtree << endl;
+                    std::string subtree = CreateTree(dir, "subtree" + dir);
+                    tree << "tree " << dir << " " << subtree << endl;
                 }
                 else
-                    myTree << "blob " << myData << endl;
+                    tree << "blob " << data << endl;
             }
         }
-        myTree.close();
+        tree.close();
     }
 
-    const fs::path index{ ".git/index" };
-    fs::ofstream ofs_index(index);      // Effacer le fichier d'index
+    fs::path index{ ".git/index" };
+    fs::ofstream ofs_index(index);      // Clear index file
 
     return sha1;
 }
 
-
-// Cette fonction est utilisée pour créer un dossier
-// et un fichier avec un sha1 généré
-string Dir_creation(string sha1)
+/*
+* Used to add parent files into child tree
+*   Parameters: (parent) Sha1 of the parent commit
+*               (tree) Sha1 of the child tree
+*/
+void AddParentFile(std::string parent, std::string tree)
 {
-    boost::system::error_code code;
-    const string dir_name = sha1.substr(0, 2);
-    const string file_name = sha1.substr(2);
-    const auto currentPath = boost::filesystem::current_path();
-    auto myPath = currentPath / ".git" / "objects" / dir_name;
+    std::string line;
+    std::string parentTree;
+    auto curPath = fs::current_path();
+    std::string parentPath = parent.substr(0, 2) + "/" + parent.substr(2);
+    std::string treePath = tree.substr(0, 2) + "/" + tree.substr(2);
 
-    boost::filesystem::create_directory(myPath, code);
-    if (!boost::filesystem::exists(myPath, code)) // ne lance pas d'exception .. c'est attrapé par le code
+    // Read parent to get his tree
+    fs::path parentP{ curPath.append(".git/objects/" + parentPath) };
+    fs::ifstream ifs{ parentP };
+
+    while (std::getline(ifs, line))
+        if (line.substr(0, 4).find("tree") != std::string::npos)
+            parentTree = line.substr(5, 2) + "/" + line.substr(7);
+
+    std::string lineParent;
+    std::string lineChild;
+
+    auto curPath2 = fs::current_path();
+    auto curPath3 = fs::current_path();
+
+    fs::path parentT{ curPath2.append(".git/objects/" + parentTree) };
+    fs::path childT{ curPath3.append(".git/objects/" + treePath) };
+
+    fs::ifstream ifs2{ parentT };
+    fs::ifstream ifs3{ childT };
+
+    fs::ofstream ofs{ childT, ios::app };
+
+    // We loop while the parent file still have a line
+    while (std::getline(ifs2, lineParent))
     {
-        if (code.failed()) // et ensuite, on vérifie pour voir si le code est ok
+        while (std::getline(ifs3, lineChild))
         {
-            cout << "Something bad happened but we didn't throw anything...so thats good :)" << endl;
-            return("");
+            if (lineChild.find(lineParent) == std::string::npos)
+                ofs << lineParent << endl;
         }
     }
+}
 
-    boost::filesystem::ofstream(myPath.append(file_name));
-    return(myPath.string());
+bool Commit(std::string msg, std::string author)
+{
+    std::string commitParent = "\0";
+    std::string sha1 = Sha1Generator("commit" + msg + author);
+
+    boost::system::error_code code;
+    const string NAME_DIR = sha1.substr(0, 2);
+    const string NAME_FILE = sha1.substr(2);
+
+    auto currentPath = boost::filesystem::current_path();
+    boost::filesystem::create_directory(currentPath.append(".git").append("objects").append(NAME_DIR), code);
+
+    boost::filesystem::ofstream(currentPath.append(NAME_FILE));
+
+    std::string file = currentPath.string();
+
+
+    time_t now = time(0);
+    char* dt = ctime(&now);
+
+
+    std::cout << file << std::endl;
+    fs::path head{ ".git/HEAD" };
+    fs::path objects{ file };
+
+    fs::ifstream ifs_head{ head };
+
+    if (!fs::is_empty(head))
+        ifs_head >> commitParent;
+
+    fs::ofstream ofs_head(head);
+    fs::ofstream ofs(objects);
+
+    std::string tree = CreateTree(".git/index", "tree" + msg + author); // Create tree
+
+    if (commitParent != "\0")
+        AddParentFile(commitParent, tree); // Add parent files already present
+
+    // Write commit file
+    ofs << "parent " << commitParent << endl << "tree " << tree << endl << dt << endl << "author " << author << endl << "author " << endl << msg << endl;
+    ofs_head << sha1 << endl; // Update HEAD
+
+    ofs_head.close();
+    ofs.close();
+
+    std::cout << "Commit successfull" << std::endl;
 }
