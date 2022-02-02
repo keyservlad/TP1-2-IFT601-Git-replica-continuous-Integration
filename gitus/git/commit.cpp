@@ -25,8 +25,9 @@ bool Commit(string message, string author)
             return false;
         }
     }
-    boost::filesystem::ofstream(myPath / file_name);
-    const string file = myPath.string();
+    const auto the_Path = myPath / file_name;
+    boost::filesystem::ofstream(the_Path);
+    const string file = the_Path.string();
 
     const time_t myTime = time(0);
     const char* d_time = ctime(&myTime);
