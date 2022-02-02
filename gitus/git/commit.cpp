@@ -73,7 +73,7 @@ bool Commit(string message, string author)
          
 
     // Faire le commit
-    ofs_obj << "parent " << parent << endl << "tree " << tree << endl << d_time << endl << "author " << author << endl << "message " << endl << message << endl;
+    ofs_obj << "Parent: " << parent << endl << "Tree: " << tree << endl << "Date: " << d_time << endl << "Author: " << author << endl << "Message: " << message << endl;
     o_head << sha1 << endl; // mettre à jour le HEAD
 
     o_head.close();
@@ -117,17 +117,17 @@ string Creat_Tree(string chemain, string txt)
     const string myTxt = "tree" + txt;
     const string sha1 = Sha1Generator(myTxt);
     string myData;
-    string myFile = Dir_creation(sha1);
+    string myFile = "";
     boost::system::error_code code;
 
-    //try
-    //{
-    //   myFile = Dir_creation(sha1);
-    //}
-    //catch (exception& e)
-    //{
-    //    cout << e.what() << endl;
-    //}
+    try
+    {
+        myFile = Dir_creation(sha1);
+    }
+    catch (exception& e)
+    {
+        cout << e.what() << endl;
+    }
 
     // Si le chemin se trouve dans un autre sous-dossier
     if (chemain != ".git/index")
@@ -189,6 +189,10 @@ string Creat_Tree(string chemain, string txt)
 
     return sha1;
 }
+
+
+// Cette fonction est utilisée pour créer un dossier
+// et un fichier avec un sha1 généré
 string Dir_creation(string sha1)
 {
     boost::system::error_code code;
