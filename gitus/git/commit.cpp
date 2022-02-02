@@ -40,10 +40,7 @@ bool Commit(string message, string author)
         i_head >> parent;
 
     fs::ofstream o_head(myHead);
-
-    /// 
-    fs::ofstream ofs_obj(myPath.c_str());
-    ///
+    fs::ofstream ofs_obj(myObjects);
 
     const string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
 
