@@ -27,29 +27,3 @@ string Sha1Generator(string path)
 	return result;
 }
 
-// Création du sha1 pour la fonction Add()
-string Sha1_Add_Generator(string path)
-{
-	// fichier de l'input
-	ifstream fichier(path);
-
-	string contenu{ std::istreambuf_iterator<char>(fichier),
-					std::istreambuf_iterator<char>() };
-
-	// Longuer du ficher
-	int longueur = contenu.length();
-	string TheHeader = "sha1 " + std::to_string(longueur);
-	contenu = TheHeader + contenu;
-
-	sha1 sha;
-	sha.process_bytes(contenu.c_str(), contenu.length());
-
-	unsigned int hash[5];
-	sha.get_digest(hash);
-
-	std::stringstream stream;
-	for (int i = 0; i < 5; ++i)
-		stream << std::hex << hash[i];
-
-	return stream.str();
-}
