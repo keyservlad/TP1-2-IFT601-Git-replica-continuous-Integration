@@ -26,7 +26,7 @@ bool Commit(string message, string author)
     fs::ofstream o_head(myHead);
     fs::ofstream ofs_obj(myObjects);
 
-    const string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
+    string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
 
     // Ajouter les fichiers parents déjà présents
     if (parent != "\0")
@@ -114,11 +114,11 @@ bool Verif_File(string path, string txt)
 */
 string Creat_Tree(string chemain, string txt)
 {
+    boost::system::error_code code;
     const string myTxt = "tree" + txt;
     const string sha1 = Sha1Generator(myTxt);
     string myData;
     string myFile = "";
-    boost::system::error_code code;
 
     try
     {
