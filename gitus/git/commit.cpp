@@ -80,6 +80,7 @@ bool Commit(string message, string author)
     ofs_obj.close();
 
     cout << "Commit has been successfully established !! :)" << endl;
+    string the_tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
     return true;
 }
 
