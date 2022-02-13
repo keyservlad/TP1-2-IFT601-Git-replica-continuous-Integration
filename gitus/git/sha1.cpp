@@ -11,6 +11,7 @@ using namespace boost::uuids::detail;
 
 string Sha1Generator(string path)
 {
+    // AB - mauvaise génération du SHA1 -5
 	sha1 sha;
 	sha.process_bytes(path.c_str(), path.length());
 

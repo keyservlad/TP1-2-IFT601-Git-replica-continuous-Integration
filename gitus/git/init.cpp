@@ -3,7 +3,7 @@
 #include <boost/filesystem.hpp>
 
 
-void Init() {
+void Init() { // AB - constance d'accolades -2
 	const auto current_path = boost::filesystem::current_path();	// ou sommes nous?
 
 	// l'opéreteur "/" sert à concaténer un chemin (path -- style boost) avec un chemin ou bien une chaine de caractères
@@ -13,7 +13,7 @@ void Init() {
 	if (!boost::filesystem::exists(gitFolder))  // peut lancer une exception
 	{
 		// si le répertoire n'existe pas, on le crée
-		boost::filesystem::create_directory(gitFolder); // exception possible
+		boost::filesystem::create_directory(gitFolder); // exception possible -- AB - pas corrigé -5
 
 	}
 	else

@@ -108,7 +108,7 @@ TEST_CASE("add")
 
 
 	// on créé le sha1 du fichier et on vérifie son path
-	const string sha1 = Sha1Generator("test.txt");
+	const string sha1 = Sha1Generator("test.txt"); // AB - ca aurait été mieu de savoir à l'avance le sha1 généré et de le tester avec celui-ci
 	const string sha1_Directory = sha1.substr(0, 2);
 	const string sha1_File = sha1.substr(2);
 	auto const sha1_Path = fs::current_path() / ".git" / "objects" / sha1_Directory / sha1_File;
@@ -179,6 +179,7 @@ TEST_CASE("add-without-init")
 
 TEST_CASE("commit")
 {
+    // AB - ce test est beaucoup moins interessant que les autres...
 	boost::system::error_code code;
 
 	// on créé les variables des chemins des fichiers et dossiers créés par init
@@ -231,4 +232,6 @@ TEST_CASE("commit")
 	sha1_Input.close();
 
 	const string sha1FileContent = sha1_Content.str();
+
+    // AB - hum?
 }

@@ -1,8 +1,32 @@
+/** AB - Commentaires
+*  
+*       Manque beaucoup de constantes -5
+*       Accolades   -2
+*       Exception possible -5
+*       non gestion de git add --help -2
+*       mauvaise génération du SHA1 -5
+*       constance de la nomenclature -2 (snake_case et camelCase)
+*       Commentaire faible -2
+*       Manque commentaire -2
+*       Nomenclature x2 -4
+*       Effet de bord -2
+*       Mauvaise gestion de la création d'arbre -5
+*       Utilisation du message et auteur pour la génération de l'arbre? -5
+*       Qualité générale du code faible -5
+*       
+*       Tests: 15/25
+* 
+* 
+*       Total:
+*           44/100
+*/
+
+
 #include <iostream>
 #include <fstream>
 #include <cerrno>
-#include <boost/filesystem.hpp>
-#include <ctime>
+#include <boost/filesystem.hpp> // AB - include inutile ici
+#include <ctime> // AB - include inutile ici
 
 #include <init.h>
 #include <add.h>
@@ -18,7 +42,7 @@ void Help()
 }
 
 
-std::vector<std::string> argvString;
+std::vector<std::string> argvString; // AB - pourquoi une variable globale?? -2
 
 int main(int argc, char* argv[])
 {
@@ -30,7 +54,7 @@ int main(int argc, char* argv[])
 		Help();
 
 	// init
-	else if (argvString[1] == "init")
+	else if (argvString[1] == "init") // AB - contante?
 	{
 		if (argc == 2)
 			Init();
@@ -39,9 +63,9 @@ int main(int argc, char* argv[])
 	}
 
 	// add
-	else if (argvString[1] == "add")
+	else if (argvString[1] == "add") // AB - idem
 	{
-		if (argc == 3)
+		if (argc == 3) // AB - et gitus add --help? -2
 			Add(argvString[2]);
 		else
 			std::cout << "How to use: gitus add <pathspec>" << std::endl;
@@ -58,7 +82,7 @@ int main(int argc, char* argv[])
 	else
 		Help();
 
-    return 42;
+    return 42; // AB - très mauvaise pratique. Tout ce qui n'est pas 0 signifie qu'il y a eu une erreur. -2
 }
 
 

@@ -8,7 +8,7 @@ namespace fs = boost::filesystem;
 
 bool Commit(string message, string author)
 {
-    string parent = "\0";
+    string parent = "\0"; // AB - pourquoi?
     const string sha1 = Sha1Generator("commit" + message + author);
     const string file = Dir_creation(sha1);
 
@@ -26,14 +26,20 @@ bool Commit(string message, string author)
     fs::ofstream o_head(myHead);
     fs::ofstream ofs_obj(myObjects);
 
+    // AB - pourquoi le message est dans l'arbre??? -5
     string tree = Creat_Tree(".git/index", "tree" + message + author); // Create tree
 
     // Ajouter les fichiers parents déjà présents
-    if (parent != "\0")
+    if (parent != "\0") // AB - le commentaire est très faible -2
+                        //      un meilleure commentaire:
+                        //          Si le HEAD n'est pas vide, on va batir notre arbre et commit à partir du dernier commit
+
+        // AB - aussi, pourquoi pas parent.size() == 0 ? a condition d'initialiser la chaine parent à vide.
     {
         string myLine;
         string Tree_parent;
        
+        // AB - la nomenclature est à travailler
         const string Path_parent = parent.substr(0, 2) + "/" + parent.substr(2);
         const string Path_tree = tree.substr(0, 2) + "/" + tree.substr(2);
 
@@ -45,7 +51,7 @@ bool Commit(string message, string author)
 
         while (getline(ifs, myLine))
             if (myLine.substr(0, 4).find("tree") != string::npos)
-                Tree_parent = myLine.substr(5, 2) + "/" + myLine.substr(7);
+                Tree_parent = myLine.substr(5, 2) + "/" + myLine.substr(7); // AB - commentaire? -2
 
         string parent_Line;
         string child_Line;
@@ -55,10 +61,10 @@ bool Commit(string message, string author)
         const fs::path t_Parent{ obj_Path / Tree_parent };
         const fs::path t_Child{ obj_Path / Path_tree };
 
-        fs::ifstream ifs_2{ t_Parent };
-        fs::ifstream ifs_3{ t_Child };
+        fs::ifstream ifs_2{ t_Parent }; // AB - ifs_2 me dit absolument rien. Nomenclature -2
+        fs::ifstream ifs_3{ t_Child }; // AB - idem
 
-        fs::ofstream ofs{ t_Child, ios::app };
+        fs::ofstream ofs{ t_Child, ios::app }; // AB - idem
 
         // On boucle alors que le fichier parent a encore une ligne
         while (getline(ifs_2, parent_Line))
@@ -91,13 +97,13 @@ bool Commit(string message, string author)
 * Elle retourne 1 si le text est présent, 0 sinon
 */
 
-bool Verif_File(string path, string txt)
+bool Verif_File(string path, string txt) // AB - txt? nomenclature -2
 {
     fs::path chemain{ path };
     fs::ifstream ifs{ chemain };
     // Si le chemain est vide ne rien faire 
     if (fs::is_empty(chemain))
-        return 0;
+        return 0; // AB - Ca serait pas mieu de regarder pour l'inverse et de juste conserver le code du else?
     else
     {
         string line;
@@ -113,6 +119,7 @@ bool Verif_File(string path, string txt)
 * Elle prend comme parameres: le chemain et la chaine de caractères
 * Elle génère finalement l'arbre sha1
 */
+// AB - chemain? chemin?
 string Creat_Tree(string chemain, string txt)
 {
     boost::system::error_code code;
@@ -175,8 +182,10 @@ string Creat_Tree(string chemain, string txt)
             {
                 if (fs::is_directory(myDir))
                 {
+                    // AB - ca va toujours overwriter l'ancien arbre -5
                     string subtree = Creat_Tree(myDir, "subtree" + myDir);
                     myTree << "tree " << myDir << " " << subtree << endl;
+                    // AB - j'avais dit de ne pas faire de sous-arbres...
                 }
                 else
                     myTree << "blob " << myData << endl;
@@ -187,6 +196,7 @@ string Creat_Tree(string chemain, string txt)
 
     const fs::path index{ ".git/index" };
     fs::ofstream ofs_index(index);      // Effacer le fichier d'index
+    // AB - CreateTree efface l'index...c'est un gros effet de bord -2
 
     return sha1;
 }
@@ -194,7 +204,7 @@ string Creat_Tree(string chemain, string txt)
 
 // Cette fonction est utilisée pour créer un dossier
 // et un fichier avec un sha1 généré
-string Dir_creation(string sha1)
+string Dir_creation(string sha1) // AB - fonction qui aurait été utile dans le add...
 {
     boost::system::error_code code;
     const string dir_name = sha1.substr(0, 2);
