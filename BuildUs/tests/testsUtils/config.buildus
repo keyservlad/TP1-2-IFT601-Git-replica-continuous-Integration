@@ -1,0 +1,13 @@
+project: meaningoflife
+
+deps_include:
+ var: BOOST_INCLUDEDIR
+
+deps_library:
+ var: BOOST_LIBRARYDIR
+ libs:
+  - boost_filesystem
+  
+compile:
+ - f1 : main.cpp
+ - f2 : meaningoflife.cpp

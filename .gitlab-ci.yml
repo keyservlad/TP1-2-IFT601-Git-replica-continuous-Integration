@@ -1,0 +1,10 @@
+Test:
+ image: guia2612/lab3
+ script:
+  - cd BuildUs
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${BOOST_LIBRARYDIR}
+  - ./tests/buildtests
