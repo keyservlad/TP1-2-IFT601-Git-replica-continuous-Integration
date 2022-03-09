@@ -1,4 +1,4 @@
-project: meaningoflife
+project: helloworld
 
 deps_include:
  var: BOOST_INCLUDEDIR

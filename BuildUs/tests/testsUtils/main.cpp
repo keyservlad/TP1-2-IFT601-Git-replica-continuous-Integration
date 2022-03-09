@@ -1,10 +1,9 @@
 #include <iostream>
-#include "meaningoflife.h"
+#include "helloworld.h"
 
 int main()
 {
-	// Print the meaning of life
-	std::cout << "The meaning of life is : " << getMeaningOfLife() << std::endl;
+	std::cout << getHelloWorld() << std::endl;
 
 	return 0;
 }

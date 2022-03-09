@@ -10,4 +10,4 @@ deps_library:
   
 compile:
  - f1 : main.cpp
- - f2 : meaningoflife.cpp
+ - f2 : helloworld.cpp

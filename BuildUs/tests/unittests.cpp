@@ -19,20 +19,20 @@ TEST_CASE("compile_build_and_clean")
     path = intermediatePath;
     const auto mainPath_o = path.append("main.o");
     path = intermediatePath;
-    auto meaningPath_o = path.append("meaningoflife.o");
+    auto helloPatho = path.append("helloworld.o");
     path = originalPath;
-    const auto meaningPath_app = path.append("tests").append("testsUtils").append("meaningoflife");
+    const auto helloPathApp = path.append("tests").append("testsUtils").append("helloworld");
 
     // Execute BuildUs
     REQUIRE(boost::process::system("./BuildUs tests/testsUtils/config.buildus tests/testsUtils") == 0);
 
     // Check if directory and file creation was a success
     REQUIRE(boost::filesystem::exists(mainPath_o, code));
-    REQUIRE(boost::filesystem::exists(meaningPath_o, code));
-    REQUIRE(boost::filesystem::exists(meaningPath_app, code));
+    REQUIRE(boost::filesystem::exists(helloPatho, code));
+    REQUIRE(boost::filesystem::exists(helloPathApp, code));
  
     // Execute the created app
-    REQUIRE(boost::process::system("./tests/testsUtils/meaningoflife") == 0);
+    REQUIRE(boost::process::system("./tests/testsUtils/helloworld") == 0);
 
     // Clean intermediate directory
     REQUIRE(boost::process::system("./BuildUs clean") == 0);

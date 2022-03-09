@@ -1,8 +1,3 @@
-/*
-   Using YAML-cpp library
-   https://github.com/jbeder/yaml-cpp
- */
-
 #include <buildus.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -10,25 +5,24 @@
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 
+// we use the yaml-cpp external library 
+
 int build(std::string filePathStr, std::string destinationPathStr) 
 {
-	// Get BuildUs path
-	const auto originalPath = boost::filesystem::current_path();
-	auto path = originalPath;
-
 	// Get config
 	YAML::Node config = YAML::LoadFile(filePathStr);
 
-	// Check if project name is valid
+	// We check that the project name id defined
 	if (!config["project"] || config["project"].IsNull()) 
 	{
-		std::cout << "Error : project name is invalid" << std::endl;
+		std::cout << "Build failed : project name is not valid" << std::endl;
 		return 1;
 	}
 
 	std::string projectName = config["project"].as<std::string>();
+	const auto intermediatePath = boost::filesystem::current_path().append(destinationPathStr).append(projectName).string();
 
-	// Compile intermediate files
+	// We compile the intermediate files
 	std::string intermediateFiles = compile(config, filePathStr);
 
 	if (intermediateFiles == "Error") 
@@ -36,52 +30,55 @@ int build(std::string filePathStr, std::string destinationPathStr)
 		return 1;
 	}
 
-	std::string commandLine = "g++ " + intermediateFiles + "-o " + boost::filesystem::current_path().append(destinationPathStr).append(projectName).string();
+	std::string commandToExecute = "g++ " + intermediateFiles + "-o " + intermediatePath;
 
-	// Check if there is a library to be added
+	// adds the libraries to the command
 	if (config["deps_library"]) 
 	{
 		std::string lib = getLibrary(config);
-		commandLine += lib;
+		commandToExecute += lib;
 	}
 
 	// Build
-	int verif = boost::process::system(commandLine);
-	if (verif != 0)
+	int commandValidation = boost::process::system(commandToExecute);
+	if (commandValidation != 0)
 	{
 		std::cout << "Error : could not build file" << std::endl
-			<< "code : " + verif << std::endl;
+			<< "code : " + commandValidation << std::endl;
 	}
 
-	return verif;
+	return commandValidation;
 }
 
 std::string compile(YAML::Node config, std::string filePathStr)
 {
 	boost::system::error_code code;
-	int verif;
 	std::string file;
 	std::string intermediateFiles;
 	std::string include;
 	bool checkTime = false;
-
-	// Get paths
-	const auto originalPath = boost::filesystem::current_path();
-	auto path = originalPath;
-	const auto intermediatePath = path.append("intermediate");
+	const auto currentPath = boost::filesystem::current_path();
+	const auto intermediatePath = currentPath / "intermediate";
 
 	// Get file path without the config file
-	boost::filesystem::path filePath(originalPath);
+	boost::filesystem::path filePath(currentPath);
 	filePath.append(filePathStr);
 	filePath = filePath.parent_path();
 
-	// Create intermediate directory
+	// Create the intermediate directory
 	if (!boost::filesystem::exists(intermediatePath, code))
 	{
 		boost::filesystem::create_directory("intermediate", code);
 	}
+	if (!boost::filesystem::exists(intermediatePath, code))
+	{
+		if (code.failed())
+		{
+			std::cout << "Failed creating the intermediate directory" << std::endl;
+		}
+	}
 
-	// Get include if there is any
+	// adds the include if there is one
 	if (config["deps_include"])
 	{
 		include = getInclude(config);
@@ -95,13 +92,12 @@ std::string compile(YAML::Node config, std::string filePathStr)
 		return "Error";
 	}
 
-	// Compile files.cpp to intermediate files.o
+	// cpp to intermediate o for all the file to compile (loop trough them)
 	for (int i = 0; i < toCompile.size(); i++) 
 	{
 		// File .cpp
-		path = filePath;
-		path.append(toCompile[i]);
-		if (!boost::filesystem::exists(path, code)) 
+		const auto pathToCompile = filePath / toCompile[i];
+		if (!boost::filesystem::exists(pathToCompile, code))
 		{
 			std::cout << "Error : " + toCompile[i] + " is missing" << std::endl;
 			return "Error";
@@ -112,20 +108,20 @@ std::string compile(YAML::Node config, std::string filePathStr)
 		file = pathFileO.string();
 
 		// File .o
-		boost::filesystem::path f(file);
+		boost::filesystem::path fileo(file);
 
 		// Check if files have been modified
-		if (boost::filesystem::exists(file)) 
+		if (boost::filesystem::exists(file))
 		{
-			checkTime = (boost::filesystem::last_write_time(path) == boost::filesystem::last_write_time(f));
+			checkTime = (boost::filesystem::last_write_time(pathToCompile) == boost::filesystem::last_write_time(fileo));
 		}
 
-		if (!checkTime) 
+		if (!checkTime)
 		{
-			verif = boost::process::system("g++ -c -o " + file + " " + path.string() + " " + include);
+			int verif = boost::process::system("g++ -c -o " + file + " " + pathToCompile.string() + " " + include);
 
 			// Same time for both files
-			boost::filesystem::last_write_time(path, boost::filesystem::last_write_time(f));
+			boost::filesystem::last_write_time(pathToCompile, boost::filesystem::last_write_time(fileo));
 
 			if (verif != 0) 
 			{
@@ -217,7 +213,6 @@ int clean()
 {
 	boost::system::error_code code;
 
-	// Get intermediate files path
 	const auto intermediatePath = boost::filesystem::current_path().append("intermediate");
 
 	if (!boost::filesystem::exists(intermediatePath, code))
