@@ -3,6 +3,8 @@ Arnaud Guilhamat guia2612
 
 Pour ce TP nous avons utilisé la bibliothèque yaml-cpp qui est incluse dans l'installation de Buildus
 
+L'image docker utilisée pour l'intégration continue est guia2612/lab3
+
 Setup avec cmake :
 se placer dans le directory Buildus, créer un directory build et executer cmake et make dans le build
 
