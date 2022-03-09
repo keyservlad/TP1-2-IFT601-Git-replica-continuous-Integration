@@ -69,9 +69,3 @@ TEST_CASE("compileMissingFile")
     REQUIRE(boost::process::system("./BuildUs tests/testsUtils/badconfig2.buildus tests/testsUtils") == 1);
 }
 
-TEST_CASE("noCompile")
-{
-    // no compile
-    REQUIRE(boost::process::system("./BuildUs tests/testsUtils/badconfig3.buildus tests/testsUtils") == 1);
-}
-
