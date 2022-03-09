@@ -1,6 +1,6 @@
 #include "helloworld.h"
 
-int getHelloWorld()
+std::string getHelloWorld()
 {
     return 'Hello world';
 }

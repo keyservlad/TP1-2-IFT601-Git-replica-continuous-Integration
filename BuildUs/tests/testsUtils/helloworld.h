@@ -1,4 +1,4 @@
 #pragma once
 
-int getHelloWorld();
+std::string getHelloWorld();
 
