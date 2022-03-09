@@ -2,5 +2,5 @@
 
 std::string getHelloWorld()
 {
-    return 'Hello world';
+    return "Hello world";
 }
