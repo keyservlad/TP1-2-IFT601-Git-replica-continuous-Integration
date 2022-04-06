@@ -13,13 +13,13 @@ int build(std::string filePathStr, std::string destinationPathStr)
 	YAML::Node config = YAML::LoadFile(filePathStr);
 
 	// We check that the project name id defined
-	if (!config["project"] || config["project"].IsNull()) 
+	if (!config["project"] || config["project"].IsNull()) // SD - devrait etre une constante -2
 	{
 		std::cout << "Build failed : project name is not valid" << std::endl;
 		return 1;
 	}
 
-	std::string projectName = config["project"].as<std::string>();
+	std::string projectName = config["project"].as<std::string>(); // SD - devrait etre une constante
 	const auto intermediatePath = boost::filesystem::current_path().append(destinationPathStr).append(projectName).string();
 
 	// We compile the intermediate files
@@ -33,7 +33,7 @@ int build(std::string filePathStr, std::string destinationPathStr)
 	std::string commandToExecute = "g++ " + intermediateFiles + "-o " + intermediatePath;
 
 	// adds the libraries to the command
-	if (config["deps_library"]) 
+	if (config["deps_library"])  // SD - devrait etre une constante
 	{
 		std::string lib = getLibrary(config);
 		commandToExecute += lib;
@@ -79,7 +79,7 @@ std::string compile(YAML::Node config, std::string filePathStr)
 	}
 
 	// adds the include if there is one
-	if (config["deps_include"])
+	if (config["deps_include"]) // SD - devrait etre une constante
 	{
 		include = getInclude(config);
 	}
@@ -142,7 +142,7 @@ std::string getLibrary(YAML::Node config)
 	std::string libDir;
 	std::vector<std::string> dir;
 
-	boost::split(dir, config["deps_library"]["var"].as<std::string>(), boost::is_space());
+	boost::split(dir, config["deps_library"]["var"].as<std::string>(), boost::is_space()); // SD - devrait etre une constante
 
 	for (int i = 0; i < dir.size(); i++) 
 	{
@@ -160,7 +160,7 @@ std::string getInclude(YAML::Node config)
 	std::string includeDir;
 	std::vector<std::string> dir;
 
-	boost::split(dir, config["deps_include"]["var"].as<std::string>(), boost::is_space());
+	boost::split(dir, config["deps_include"]["var"].as<std::string>(), boost::is_space()); // SD - devrait etre une constante
 
 	for (int i = 0; i < dir.size(); i++) 
 	{
@@ -175,11 +175,11 @@ std::string getLibraryFiles(YAML::Node config)
 {
 	std::string libraryFiles;
 
-	if (config["deps_library"] || !config["deps_library"].IsNull()) 
+	if (config["deps_library"] || !config["deps_library"].IsNull())  // SD - devrait etre une constante
 	{
-		for (int i = 0; i < config["deps_library"]["libs"].size(); i++) 
+		for (int i = 0; i < config["deps_library"]["libs"].size(); i++)  // SD - devrait etre une constante
 		{
-			libraryFiles += " -l" + config["deps_library"]["libs"][i].as<std::string>();
+			libraryFiles += " -l" + config["deps_library"]["libs"][i].as<std::string>(); // SD - devrait etre une constante
 		}
 	}
 

@@ -1,3 +1,35 @@
+/*
+*   SD - CORRECTION
+*
+*   Code
+*		nom de variable -2
+*		L'exception create_directory n'arrete pas le traitement -5
+* 
+*
+*   Lire le fichier de description     8/10
+*		Manque de constante -2
+* 
+*   Compilation minimale    15/15
+*
+*   Enregistrer les fichiers intermédiaires    10/10
+*
+*   Générer l’exécutable    10/10
+*
+*   Génération du dossier livrable  10/10
+*
+*   Effacer les fichiers intermédiaires     10/10
+*
+*   Qualité des tests   10/20
+*		voir fichiers .o
+*		paths, libs, exection, app
+*
+*   Utilisation du IC   15/15
+*
+*	
+*	81/100
+* 
+*/
+
 #include <iostream>
 #include <vector>
 #include <boost/filesystem.hpp>
@@ -37,7 +69,7 @@ int main(int argc, char* argv[])
 		}
 
 		// Check if it ends with .buildus
-		std::string str1 = argvString[1].substr(argvString[1].length() - 8, 8);
+		std::string str1 = argvString[1].substr(argvString[1].length() - 8, 8); // SD - nom de variable -2
 		if (!(str1 == ".buildus")) 
 		{
 			std::cout << "Error : unknown config file" << std::endl
@@ -49,12 +81,12 @@ int main(int argc, char* argv[])
 		const auto deliverablePath = currentPath / argvString[2];
 		if (!boost::filesystem::exists(deliverablePath, code))
 		{
-			boost::filesystem::create_directory(deliverablePath, code);
+			boost::filesystem::create_directory(deliverablePath, code); 
 		}
 		
 		if (!boost::filesystem::exists(deliverablePath, code))
 		{
-			if (code.failed())
+			if (code.failed())// SD - possibilite d'exception et continuation du traitement -5
 			{
 				std::cout << "Failed creating the deliverable directory" << std::endl;
 			}
